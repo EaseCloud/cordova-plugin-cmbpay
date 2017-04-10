@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="cordova-plugin-cmbpay" version="0.1.1" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+    <name>CMBPay</name>
+    <description>Cordova CMB Pay Plugin</description>
+    <author>Alfred Huang</author>
+    <license>Apache 2.0</license>
+    <keywords>cordova,cmbpay,payment,chinese</keywords>
+    <js-module name="cmbpay" src="www/cmbpay.js">
+        <clobbers target="cmbpay" />
+    </js-module>
+    <info>This plugin make CMB payments in cordova apps.</info>
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="CMBPayPlugin">
+                <param name="android-package" value="com.aiunit.cmbpay.CMBPayPlugin"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.READ_PHONE_STATE" />  
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+<!--
+            <service android:name="cmb.pb.cmbsafe.CmbService" android:exported="false"></service>        
+            <activity
+                android:name="cmb.pb.ui.PBKeyboardActivity"
+                android:theme="@style/CmbDialogStyleBottom" >
+            </activity>
+-->
+            <activity
+                android:name="com.aiunit.cmbpay.CMBPayActivity"
+                android:theme="@android:style/Theme.Black.NoTitleBar">
+            </activity>
+        </config-file>
+
+        <source-file src="src/android/libs/cmbkeyboard2.0.jar" target-dir="libs"/>
+        <source-file src="src/android/libs/httpcore-4.3.jar" target-dir="libs"/>
+
+        <source-file src="src/android/CMBPayPlugin.java" target-dir="src/com/aiunit/cmbpay" />
+        <source-file src="src/android/CMBPayActivity.java" target-dir="src/com/aiunit/cmbpay" />
+
+        <source-file src="src/android/res/layout/cmbkeyboardview.xml" target-dir="res/layout"/>    
+        <source-file src="src/android/res/layout/activity_cmbpay.xml" target-dir="res/layout"/>
+
+        <source-file src="src/android/res/drawable/cmbkb_backspace_dark_icon.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_backspace_icon.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_bg.9.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_btn_normal.9.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_btn_pressed.9.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_key_delete_normal.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_logo.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_shift_actived.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_shift_dark_normal.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_shift_normal.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_space.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_space_dark.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbkb_sym_keyboard_space.png" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable-hdpi/cmbkb_list_separator.png" target-dir="res/drawable"/>
+
+        <source-file src="src/android/res/drawable/cmbkb_btn_keyboard_key.xml" target-dir="res/drawable"/>
+
+        <source-file src="src/android/res/drawable/pb.xml" target-dir="res/drawable"/>
+        <source-file src="src/android/res/drawable/cmbpay_back_left.png" target-dir="res/drawable"/>
+
+        <source-file src="src/android/res/values/cmbkb_attrs.xml" target-dir="res/values"/>
+        <source-file src="src/android/res/values/cmbkb_colors.xml" target-dir="res/values"/>
+        <source-file src="src/android/res/values/cmbkb_dimens.xml" target-dir="res/values"/>
+        <source-file src="src/android/res/values/cmbkb_strings.xml" target-dir="res/values"/>
+        <source-file src="src/android/res/values/cmbkb_styles.xml" target-dir="res/values"/>
+
+        <source-file src="src/android/res/anim/cmbkb_push_bottom_in.xml" target-dir="res/anim"/>
+        <source-file src="src/android/res/anim/cmbkb_push_bottom_out.xml" target-dir="res/anim"/>
+
+    </platform>
+    <!--<platform name="ios">-->
+    <!--<config-file target="config.xml" parent="/*">-->
+    <!--<feature name="Device">-->
+    <!--<param name="ios-package" value="CDVDevice"/>-->
+    <!--</feature>-->
+    <!--</config-file>-->
+    <!--<header-file src="src/ios/CDVDevice.h" />-->
+    <!--<source-file src="src/ios/CDVDevice.m" />-->
+    <!--</platform>-->
+</plugin>
