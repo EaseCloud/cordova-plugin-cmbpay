@@ -16,9 +16,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import cn.easecloud.demo.R;
-
 import org.apache.http.util.EncodingUtils;
+
 import cmb.pb.util.CMBKeyboardFunc;
 
 import static android.webkit.WebSettings.LOAD_NO_CACHE;
@@ -31,7 +30,7 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
     private ProgressBar pb;
 
     //post参数
-    private  String url;
+    private String url;
     private String jsonRequestData;
 
     private String filterUrl;
@@ -39,28 +38,41 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cmbpay);
+        setContentView(_R("layout", "activity_cmbpay"));
 
         Intent i = getIntent();
         url = i.getStringExtra("url");
 
-        jsonRequestData= i.getStringExtra("jsonRequestData");
+        jsonRequestData = i.getStringExtra("jsonRequestData");
         //初始化页面
         initView();
         //加载页面
         postUrl();
+    }
 
+    /**
+     * The same as R.{defType}.{name}
+     * @param name
+     * @param defType
+     * @return
+     */
+    private int _R(String defType, String name) {
+        return getApplication().getResources().getIdentifier(
+                name, defType, getApplication().getPackageName());
     }
 
     private void initView() {
 
         //返回图片、招行title
-        ImageView ivBanner = (ImageView) findViewById(R.id.cmbpay_banner);
+//        ImageView ivBanner = (ImageView) findViewById(R.id.cmbpay_banner);
+        ImageView ivBanner = (ImageView) findViewById(_R("id", "cmbpay_banner"));
         ivBanner.setOnClickListener(this);
 
-        pb = (ProgressBar) findViewById(R.id.cmbpay_progressbar);
+////        pb = (ProgressBar) findViewById(R.id.cmbpay_progressbar);
+        pb = (ProgressBar) findViewById(_R("id", "cmbpay_progressbar"));
 
-        webView = (WebView) findViewById(R.id.cmbpay_webview);
+//        webView = (WebView) findViewById(R.id.cmbpay_webview);
+        webView = (WebView) findViewById(_R("id", "cmbpay_webview"));
         WebSettings webSettings = webView.getSettings();
 
         //设置WebView属性，能够执行Javascript脚本
@@ -72,17 +84,14 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
         webSettings.setSupportZoom(false);
 
         webView.setWebViewClient(new WebViewClient() {
-
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Intent i;
-
                 CMBKeyboardFunc kbFunc = new CMBKeyboardFunc(CMBPayActivity.this);
-                if(kbFunc.HandleUrlCall(view, url) == false)
-                {
+                if (kbFunc.HandleUrlCall(view, url) == false) {
                     if (url.contains("cmbls/cmbKeyboard")) {
                         i = new Intent();
-                        setResult(1,i);
+                        setResult(1, i);
                         finish();
                         return false;
                     } else {
@@ -92,17 +101,13 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
                     return true;
                 }
             }
-
             @Override
             public void onPageStarted(WebView view, String url, Bitmap bitmap) {
             }
-
             public void onPageFinished(WebView view, String url) {
                 filterUrl = url;
             }
-
         });
-
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -117,7 +122,6 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
                 }
                 super.onProgressChanged(view, newProgress);
             }
-
         });
 
     }
@@ -129,31 +133,24 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
             CookieManager.getInstance().removeAllCookie();
             CookieSyncManager.getInstance().sync();
         } catch (Exception e) {
-
         }
 
         String body = "jsonRequestData=" + jsonRequestData;
         webView.postUrl(url, EncodingUtils.getBytes(body, "base64"));
-        //byte[] data = text.getBytes("UTF-8");
-        //String base64 = Base64.encodeToString(data, Base64.DEFAULT);
-
-        //webView.postUrl(url, );
-
     }
 
     @Override
     public void onClick(View v) {
         Intent i;
-        switch (v.getId()) {
-            case R.id.cmbpay_banner:
-                if(filterUrl.contains("MB_EUserP_PayOK")){
-                    i = new Intent();
-                    setResult(1,i);
-                    finish();
-                }else{
-                    finish();
-                }
-                break;
+        if (v.getId() == getApplication().getResources().getIdentifier(
+                "cmbpay_banner", "id", getApplication().getPackageName())) {
+            if (filterUrl.contains("MB_EUserP_PayOK")) {
+                i = new Intent();
+                setResult(1, i);
+                finish();
+            } else {
+                finish();
+            }
         }
     }
 }
