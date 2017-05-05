@@ -18,11 +18,11 @@ import org.json.JSONObject;
 
 public class CMBPayPlugin extends CordovaPlugin {
 
-//    public static final String TAG = "TffConfig";
+    //    public static final String TAG = "TffConfig";
     private CordovaWebView webView;
-//    private String channel = "";   //app发布渠道
+    //    private String channel = "";   //app发布渠道
     private CallbackContext callbackContext;
-    
+
     /**
      * Sets the context of the Command. This can then be used to do things like
      * get file paths associated with the Activity.
@@ -41,10 +41,10 @@ public class CMBPayPlugin extends CordovaPlugin {
     /**
      * Executes the request and returns PluginResult.
      *
-     * @param action            The action to execute.
-     * @param args              JSONArry of arguments for the plugin.
-     * @param callbackContext   The callback id used when calling back into JavaScript.
-     * @return                  True if the action was valid, false if not.
+     * @param action          The action to execute.
+     * @param args            JSONArry of arguments for the plugin.
+     * @param callbackContext The callback id used when calling back into JavaScript.
+     * @return True if the action was valid, false if not.
      */
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -52,15 +52,15 @@ public class CMBPayPlugin extends CordovaPlugin {
             if ("pay".equals(action)) {
                 // jsapi 参数传入的 payString，参照一网通支付 API http://121.15.180.72/OpenAPI2/API/PWDPayAPI4.aspx#jvch4
                 // jsapi 应传入 { url: xxxx, jsonRequestData: xxxx }
-                JSONObject json =  args.getJSONObject(0);
+                JSONObject json = args.getJSONObject(0);
                 String url = json.getString("url");
                 String jsonRequestData = json.getString("jsonRequestData");
                 // 得到callbackContext对象
                 this.callbackContext = callbackContext;
                 // 打开支付 Actiivity
                 Intent intent = new Intent(this.cordova.getActivity(), CMBPayActivity.class);
-                intent.putExtra("url",url);
-                intent.putExtra("jsonRequestData",jsonRequestData);
+                intent.putExtra("url", url);
+                intent.putExtra("jsonRequestData", jsonRequestData);
                 // 加入将要传输到activity中的参数
                 // 启动activity
                 this.cordova.startActivityForResult(this, intent, 0);
@@ -77,11 +77,11 @@ public class CMBPayPlugin extends CordovaPlugin {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent){
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         String statusCode;
         switch (requestCode) {
-            case  0:
-                if(resultCode == 1) {
+            case 0:
+                if (resultCode == 1) {
                     statusCode = "success";
                     callbackContext.success(statusCode);
                 }

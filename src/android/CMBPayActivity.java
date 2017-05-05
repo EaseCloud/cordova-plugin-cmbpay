@@ -16,6 +16,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import android.webkit.WebResourceRequest;
+
 import org.apache.http.util.EncodingUtils;
 
 import cmb.pb.util.CMBKeyboardFunc;
@@ -25,9 +27,6 @@ import static android.webkit.WebSettings.LOAD_NO_CACHE;
 public class CMBPayActivity extends Activity implements View.OnClickListener {
 
     private WebView webView;
-
-    //进度条
-    private ProgressBar pb;
 
     //post参数
     private String url;
@@ -68,17 +67,15 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
         ImageView ivBanner = (ImageView) findViewById(_R("id", "cmbpay_banner"));
         ivBanner.setOnClickListener(this);
 
-////        pb = (ProgressBar) findViewById(R.id.cmbpay_progressbar);
-        pb = (ProgressBar) findViewById(_R("id", "cmbpay_progressbar"));
-
 //        webView = (WebView) findViewById(R.id.cmbpay_webview);
         webView = (WebView) findViewById(_R("id", "cmbpay_webview"));
         WebSettings webSettings = webView.getSettings();
 
         //设置WebView属性，能够执行Javascript脚本
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setCacheMode(webSettings.LOAD_NO_CACHE);
         webSettings.setSaveFormData(false);
+        webSettings.setSavePassword(false);
+        webSettings.setCacheMode(webSettings.LOAD_NO_CACHE);
 
         //设置支持缩放
         webSettings.setSupportZoom(false);
@@ -86,24 +83,24 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Intent i;
                 CMBKeyboardFunc kbFunc = new CMBKeyboardFunc(CMBPayActivity.this);
                 if (kbFunc.HandleUrlCall(view, url) == false) {
-                    if (url.contains("cmbls/cmbKeyboard")) {
-                        i = new Intent();
-                        setResult(1, i);
-                        finish();
-                        return false;
-                    } else {
-                        return super.shouldOverrideUrlLoading(view, url);
-                    }
+                    return super.shouldOverrideUrlLoading(view, url);
                 } else {
                     return true;
                 }
             }
+
             @Override
             public void onPageStarted(WebView view, String url, Bitmap bitmap) {
+                if (url.startsWith("https://")) { //NON-NLS
+                    view.stopLoading();
+                    // DO SOMETHING
+                    CMBKeyboardFunc kbFunc = new CMBKeyboardFunc(CMBPayActivity.this);
+                    kbFunc.HandleUrlCall(view, url);
+                }
             }
+
             public void onPageFinished(WebView view, String url) {
                 filterUrl = url;
             }
@@ -112,6 +109,7 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
+                ProgressBar pb = (ProgressBar) findViewById(_R("id", "cmbpay_progressbar"));
                 if (newProgress == 100) {
                     pb.setVisibility(View.GONE);
                 } else {
@@ -134,7 +132,6 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
             CookieSyncManager.getInstance().sync();
         } catch (Exception e) {
         }
-
         String body = "jsonRequestData=" + jsonRequestData;
         webView.postUrl(url, EncodingUtils.getBytes(body, "base64"));
     }
@@ -142,8 +139,7 @@ public class CMBPayActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent i;
-        if (v.getId() == getApplication().getResources().getIdentifier(
-                "cmbpay_banner", "id", getApplication().getPackageName())) {
+        if (v.getId() == _R("id", "cmbpay_banner")) {
             if (filterUrl.contains("MB_EUserP_PayOK")) {
                 i = new Intent();
                 setResult(1, i);
